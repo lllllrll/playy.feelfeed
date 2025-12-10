@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PLAYY.Music v9.0 Polished</title>
+    <title>PLAYY.Music v10.0 Fixed Glass</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -16,8 +16,8 @@
             --text-muted: #A0A0A0;
             
             /* Glass System */
-            --glass-header: rgba(0, 0, 0, 0.9);
-            --glass-nav: rgba(0, 0, 0, 0.95);
+            --glass-header: rgba(0, 0, 0, 0.85); /* Чуть темнее для читаемости */
+            --glass-nav: rgba(0, 0, 0, 0.85);    /* Прозрачность для эффекта размытия */
             --glass-border: rgba(255, 255, 255, 0.1);
             --glass-btn: rgba(255,255,255,0.08);
         }
@@ -33,25 +33,35 @@
 
         .app-shell {
             width: 100%; max-width: 440px; height: 100%; background-color: var(--bg-deep);
-            position: relative; display: flex; flex-direction: column;
+            position: relative; /* Важно для абсолютного позиционирования меню */
+            overflow: hidden;
             box-shadow: 0 0 120px rgba(255, 77, 0, 0.1);
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER (Fixed Top) --- */
         .header {
-            flex-shrink: 0; height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;
-            background: var(--glass-header); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05); position: absolute; top: 0; width: 100%;
+            position: absolute; top: 0; left: 0; right: 0; height: 60px; padding: 0 20px; 
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: var(--glass-header); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
         .brand { display: flex; align-items: center; gap: 6px; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
         .brand-logo { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; box-shadow: 0 0 15px var(--accent-glow); }
         .header-actions { display: flex; gap: 20px; }
         .icon-svg { width: 24px; height: 24px; fill: white; cursor: pointer; opacity: 0.9; }
 
-        /* --- FEED --- */
+        /* --- FEED (Full Height Scroll) --- */
         .feed {
-            flex: 1; overflow-y: auto; padding-top: 60px; padding-bottom: 20px;
-            scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            
+            /* Отступы, чтобы контент не прятался под шапкой и меню */
+            padding-top: 60px; 
+            padding-bottom: 90px; /* Больше чем высота меню (85px) */
         }
         .feed::-webkit-scrollbar { display: none; }
 
@@ -77,90 +87,36 @@
         .story-img { width: 100%; height: 100%; border-radius: 50%; background: #222; border: 3px solid #000; object-fit: cover; }
         .story-name { font-size: 10px; color: #999; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 
-        /* --- HERO CARD (FIXED ACTIONS) --- */
+        /* HERO CARD */
         .card-hero { position: relative; width: 100%; aspect-ratio: 4/5; background: #111; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .hero-video { width: 100%; height: 100%; object-fit: cover; }
         .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #000 0%, transparent 50%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
         .hero-title { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        
-        /* FIXED ACTION BUTTONS */
         .hero-actions { display: flex; gap: 10px; align-items: center; }
         .glass-btn { 
-            height: 44px;
-            padding: 0 20px;
-            background: var(--glass-btn); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 100px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; /* Center content */
-            gap: 8px; 
-            font-size: 13px; 
-            font-weight: 600; 
-            color: white; 
-            white-space: nowrap; /* Prevent text wrap */
-            cursor: pointer;
-            transition: 0.2s;
+            height: 44px; padding: 0 20px; background: var(--glass-btn); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 100px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: white; white-space: nowrap; cursor: pointer; transition: 0.2s;
         }
         .glass-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
-        .glass-btn svg { width: 18px; height: 18px; flex-shrink: 0; } /* Fixed Icon Size */
 
-        /* --- ARTICLE/BLOG CARD (FIXED AVATAR) --- */
-        .article-card {
-            margin: 0 20px 20px 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            overflow: hidden;
-            display: flex;
-            height: 110px; /* Slight height increase for breathing room */
-        }
-        .article-img { 
-            width: 110px; 
-            height: 100%; 
-            object-fit: cover; 
-            flex-shrink: 0; /* CRITICAL: Prevents image squashing */
-        }
-        .article-content { 
-            padding: 12px 16px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            flex: 1; 
-            min-width: 0; /* CRITICAL: Enables text truncation inside flex child */
-        }
-        .article-tag { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
-        .article-title { 
-            font-size: 14px; 
-            font-weight: 600; 
-            line-height: 1.4; 
-            margin-bottom: 8px; 
-            display: -webkit-box; 
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-        }
-        .article-meta { 
-            font-size: 11px; 
-            color: #666; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; /* Space between avatar and text */
-        }
-        .article-author-pic {
-            width: 20px; 
-            height: 20px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            flex-shrink: 0; /* CRITICAL: Keeps avatar round and fixed size */
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+        /* TIKTOK CARD */
+        .card-tiktok { position: relative; width: 100%; aspect-ratio: 2/3; background: #111; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .tiktok-video { width: 100%; height: 100%; object-fit: cover; }
+        .tiktok-overlay { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .tiktok-side-actions { position: absolute; right: 10px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .side-action-btn { width: 44px; height: 44px; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; }
+        .tiktok-info { padding-right: 60px; }
 
-        /* --- NFT VISUALS & SOFT ANIMATION --- */
+        /* ARTICLE CARD */
+        .article-card { margin: 0 20px 20px 20px; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; display: flex; height: 110px; }
+        .article-img { width: 110px; height: 100%; object-fit: cover; flex-shrink: 0; }
+        .article-content { padding: 12px 16px; display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; }
+        .article-title { font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .article-meta { font-size: 11px; color: #666; display: flex; align-items: center; gap: 8px; }
+        .article-author-pic { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2); }
+
+        /* NFT VISUALS & SOFT ANIMATION */
         .nft-carousel-wrapper { perspective: 1000px; }
         .nft-ticket { width: 280px; flex-shrink: 0; background: linear-gradient(135deg, #161616, #080808); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 18px; display: flex; align-items: center; gap: 16px; transform-style: preserve-3d; position: relative; overflow: hidden; }
-        
         .nft-holo-core {
             width: 70px; height: 70px; flex-shrink: 0; position: relative; transform: translateZ(30px) rotateY(15deg); border-radius: 16px;
             background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.1) 100%), radial-gradient(circle at 50% 50%, var(--core-color), transparent 70%);
@@ -168,38 +124,8 @@
             backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3);
         }
         .nft-details { flex: 1; transform: translateZ(20px); z-index: 2; }
-        
-        /* SOFT ATTRACTIVE ANIMATION FOR BUTTON */
-        @keyframes soft-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-            50% { box-shadow: 0 0 15px 0 rgba(255, 77, 0, 0.3); border-color: rgba(255, 77, 0, 0.6); color: white; }
-            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-        }
-
-        .nft-buy-btn { 
-            margin-left: auto; 
-            padding: 8px 16px; 
-            background: rgba(255,255,255,0.05); 
-            border-radius: 8px; 
-            font-size: 11px; 
-            font-weight: 800; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            transform: translateZ(25px); 
-            color: #ddd; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            /* New Soft Animation */
-            animation: soft-pulse 3s infinite ease-in-out;
-            transition: 0.3s;
-        }
-
-        /* OTHER CARDS */
-        .card-tiktok { position: relative; width: 100%; aspect-ratio: 2/3; background: #111; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .tiktok-video { width: 100%; height: 100%; object-fit: cover; }
-        .tiktok-overlay { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; }
-        .tiktok-side-actions { position: absolute; right: 10px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
-        .side-action-btn { width: 44px; height: 44px; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; }
-        .tiktok-info { padding-right: 60px; }
+        @keyframes soft-pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); } 50% { box-shadow: 0 0 15px 0 rgba(255, 77, 0, 0.3); border-color: rgba(255, 77, 0, 0.6); color: white; } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); } }
+        .nft-buy-btn { margin-left: auto; padding: 8px 16px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); transform: translateZ(25px); color: #ddd; text-transform: uppercase; letter-spacing: 0.5px; animation: soft-pulse 3s infinite ease-in-out; transition: 0.3s; }
 
         .short-card { width: 120px; height: 210px; border-radius: 16px; background: #222; position: relative; overflow: hidden; flex-shrink: 0; }
         .short-card img { width: 100%; height: 100%; object-fit: cover; }
@@ -209,7 +135,6 @@
         .blog-img { width: 100%; height: 100%; object-fit: cover; }
         .blog-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 15%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
 
-        /* SKELETONS */
         .skeleton-container { padding: 20px; }
         .skeleton { background: #111; background-image: linear-gradient(to right, #111 0%, #1a1a1a 20%, #111 40%, #111 100%); background-repeat: no-repeat; background-size: 800px 100%; animation: shimmer 1.5s infinite linear; border-radius: 12px; }
         @keyframes shimmer { 0% { background-position: -468px 0; } 100% { background-position: 468px 0; } }
@@ -220,11 +145,21 @@
         .sk-txt-long { height: 14px; width: 90%; }
         .sk-txt-short { height: 14px; width: 40%; }
 
-        /* NAV */
+        /* --- NAV BAR (ABSOLUTE BOTTOM GLASS) --- */
         .nav-bar {
-            flex-shrink: 0; width: 100%; height: 85px; background: var(--glass-nav); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; justify-content: space-around; padding-top: 15px; z-index: 2000;
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0;
+            height: 85px; 
+            background: var(--glass-nav); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; 
+            justify-content: space-around; 
+            padding-top: 15px; 
+            z-index: 2000;
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #666; font-size: 10px; font-weight: 500; transition: 0.3s; }
         .nav-item.active { color: white; }
@@ -249,12 +184,7 @@
     <div class="feed">
         
         <div class="filters-rail">
-            <div class="pill active">For You</div>
-            <div class="pill">Following</div>
-            <div class="pill">Events</div>
-            <div class="pill">Music</div>
-            <div class="pill">Live</div>
-            <div class="pill">News</div>
+            <div class="pill active">For You</div><div class="pill">Following</div><div class="pill">Events</div><div class="pill">Music</div><div class="pill">Live</div><div class="pill">News</div>
         </div>
 
         <div class="stories-rail">
@@ -271,22 +201,13 @@
             <div class="hero-overlay">
                 <h2 class="hero-title">Electric Dreams: 2025 Tour Kickoff</h2>
                 <div class="hero-actions">
-                    <div class="glass-btn">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> 
-                        52K
-                    </div>
-                    <div class="glass-btn">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg> 
-                        Share
-                    </div>
+                    <div class="glass-btn"><svg viewBox="0 0 24 24"><path stroke="currentColor" fill="none" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> 52K</div>
+                    <div class="glass-btn"><svg viewBox="0 0 24 24"><path stroke="currentColor" fill="none" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg> Share</div>
                 </div>
             </div>
         </div>
 
-        <div class="sec-head">
-            <div class="sec-title">Read: PLAYY.Blog</div>
-        </div>
-        
+        <div class="sec-head"><div class="sec-title">Read: PLAYY.Blog</div></div>
         <div class="article-card">
             <img class="article-img" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=300&q=80">
             <div class="article-content">
@@ -322,10 +243,7 @@
                     <div class="side-action-btn"><svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span class="side-action-label">87K</span></div>
                     <div class="side-action-btn"><svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="side-action-label">Share</span></div>
                 </div>
-                <div class="tiktok-info">
-                    <div style="font-weight:700; margin-bottom:8px;">@dj_khalid</div>
-                    <p style="font-size:13px; opacity:0.9;">When the bass hits different 🔥</p>
-                </div>
+                <div class="tiktok-info"><div style="font-weight:700; margin-bottom:8px;">@dj_khalid</div><p style="font-size:13px; opacity:0.9;">When the bass hits different 🔥</p></div>
             </div>
         </div>
 
@@ -338,10 +256,7 @@
 
         <div class="blog-card-immersive" style="margin-top: 25px;">
             <img class="blog-img" src="https://images.unsplash.com/photo-1558507652-2d9626c4e67a?auto=format&fit=crop&w=600&q=80">
-            <div class="blog-overlay">
-                <div class="blog-title">Why analog synths are making a massive comeback.</div>
-                <div style="font-size:12px; color:#ccc; margin-top:8px;">Read Article &rarr;</div>
-            </div>
+            <div class="blog-overlay"><div class="blog-title">Why analog synths are making a massive comeback.</div><div style="font-size:12px; color:#ccc; margin-top:8px;">Read Article &rarr;</div></div>
         </div>
 
         <div class="skeleton-container">
@@ -349,7 +264,9 @@
             <div class="sk-row"><div class="skeleton sk-avatar"></div><div class="sk-col"><div class="skeleton sk-txt-long"></div><div class="skeleton sk-txt-short"></div></div></div>
         </div>
 
-    </div> <nav class="nav-bar">
+    </div>
+
+    <nav class="nav-bar">
         <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</div>
         <div class="nav-item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>Discover</div>
         <div class="fab"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div>
