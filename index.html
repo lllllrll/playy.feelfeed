@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PLAYY.Music Ultimatum</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg-deep: #000000;
+            --bg-card: #111111;
+            --accent: #FF4D00;
+            --accent-glow: rgba(255, 77, 0, 0.6);
+            --text-main: #FFFFFF;
+            --text-muted: #A0A0A0;
+            
+            /* Ultra Glass */
+            --glass-header: rgba(0, 0, 0, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-surface: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: #050505;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* App Shell */
+        .app-shell {
+            width: 100%;
+            max-width: 440px;
+            background-color: var(--bg-deep);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(255, 77, 0, 0.15);
+        }
+
+        /* --- HEADER --- */
+        .header {
+            position: absolute; top: 0; left: 0; right: 0; height: 60px; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: var(--glass-header); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .brand { display: flex; align-items: center; gap: 6px; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
+        .brand-logo { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; box-shadow: 0 0 15px var(--accent-glow); }
+        .header-actions { display: flex; gap: 20px; }
+        .icon-svg { width: 24px; height: 24px; fill: white; cursor: pointer; opacity: 0.9; }
+
+        /* --- FEED --- */
+        .feed {
+            flex: 1; overflow-y: auto; padding-top: 60px; padding-bottom: 90px; scroll-behavior: smooth;
+        }
+        .feed::-webkit-scrollbar { display: none; }
+
+        /* SCROLL UTILS */
+        .h-scroll {
+            display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 30px 20px;
+        }
+        .h-scroll::-webkit-scrollbar { display: none; }
+
+        /* FILTERS (Extended) */
+        .filters-rail { padding: 15px 20px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .filters-rail::-webkit-scrollbar { display: none; }
+        .pill { 
+            padding: 8px 18px; border-radius: 100px; 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); 
+            font-size: 13px; font-weight: 500; white-space: nowrap; color: #ccc; transition: 0.3s; 
+        }
+        .pill.active { background: white; color: black; font-weight: 700; border-color: white; }
+
+        /* STORIES (Massive) */
+        .stories-rail { display: flex; gap: 16px; padding: 15px 20px 25px 20px; overflow-x: auto; }
+        .stories-rail::-webkit-scrollbar { display: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; width: 66px;}
+        .story-ring { 
+            width: 66px; height: 66px; border-radius: 50%; padding: 2px; 
+            background: linear-gradient(135deg, var(--accent), #9b00ff); position: relative; 
+        }
+        .story-ring.live { background: linear-gradient(135deg, #ff0040, #ff8800); animation: pulse 2s infinite; }
+        .story-ring.seen { background: #333; }
+        
+        .story-ring.live::after { 
+            content: 'LIVE'; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); 
+            background: #E50914; color: white; font-size: 8px; padding: 2px 4px; border-radius: 4px; font-weight: 800; border: 2px solid #000; z-index: 10;
+        }
+        
+        .story-img { width: 100%; height: 100%; border-radius: 50%; background: #222; border: 3px solid #000; object-fit: cover; }
+        .story-name { font-size: 10px; color: #999; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(255, 77, 0, 0.4);} 70% {box-shadow: 0 0 0 6px rgba(255, 77, 0, 0);} 100% {box-shadow: 0 0 0 0 rgba(255, 77, 0, 0);} }
+
+        /* HERO CARD */
+        .hero-section { position: relative; width: 100%; aspect-ratio: 4/5; margin-bottom: 30px; background: #111; }
+        .hero-video { width: 100%; height: 100%; object-fit: cover; mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #000 0%, transparent 50%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+        .hero-badge { background: var(--accent); color: white; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 4px; align-self: flex-start; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .hero-title { font-size: 24px; font-weight: 800; line-height: 1.1; margin-bottom: 16px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .hero-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .glass-btn { height: 44px; background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; color: white; cursor: pointer; transition: 0.2s; }
+        .glass-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.2); }
+
+        /* HEADERS */
+        .sec-head { padding: 0 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .sec-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .sec-more { font-size: 12px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ARTICLE CARDS (NEW) */
+        .article-card {
+            margin: 0 20px 20px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            height: 100px;
+        }
+        .article-img { width: 100px; height: 100%; object-fit: cover; }
+        .article-content { padding: 12px 16px; display: flex; flex-direction: column; justify-content: center; flex: 1; }
+        .article-tag { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; display:flex; justify-content: space-between;}
+        .article-title { font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .article-meta { font-size: 11px; color: #666; display: flex; align-items: center; gap: 6px; }
+
+        /* NFT CAROUSEL */
+        .nft-carousel-wrapper { perspective: 1000px; margin-bottom: 10px; }
+        .nft-ticket {
+            width: 280px; flex-shrink: 0;
+            background: linear-gradient(135deg, #161616, #080808);
+            border: 1px solid rgba(255,255,255,0.08); border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px; padding: 18px;
+            display: flex; align-items: center; gap: 16px;
+            transform-style: preserve-3d; transition: transform 0.1s ease-out;
+            position: relative; overflow: hidden;
+        }
+        .nft-3d-obj {
+            width: 70px; height: 70px; flex-shrink: 0; position: relative; transform: translateZ(30px);
+        }
+        .nft-3d-obj::after {
+            content: ''; position: absolute; inset: 0; border-radius: 12px;
+            background: radial-gradient(circle at 30% 30%, #fff, transparent 60%), radial-gradient(circle at 60% 60%, var(--accent), transparent 60%);
+            box-shadow: 0 0 20px var(--accent-glow); filter: blur(2px); opacity: 0.9;
+            animation: float 3s infinite ease-in-out alternate;
+        }
+        @keyframes float { 0% {transform: translateY(0);} 100% {transform: translateY(-4px);} }
+        
+        .nft-details { flex: 1; transform: translateZ(20px); z-index: 2; }
+        .nft-tag { font-size: 9px; color: var(--accent); border: 1px solid var(--accent); padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; font-weight: 800; }
+        .nft-buy-btn { margin-left: auto; padding: 8px 14px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--glass-border); transform: translateZ(25px); color: white; }
+
+        /* SHORTS & MIXES */
+        .short-card { width: 120px; height: 210px; border-radius: 16px; background: #222; position: relative; overflow: hidden; flex-shrink: 0; }
+        .short-card img { width: 100%; height: 100%; object-fit: cover; }
+        .short-meta { position: absolute; bottom: 0; inset-inline: 0; padding: 12px; background: linear-gradient(to top, #000, transparent); }
+        .short-txt { font-size: 12px; font-weight: 600; line-height: 1.2; }
+
+        .mix-card { width: 260px; height: 160px; border-radius: 16px; background: #1a1a1a; flex-shrink: 0; position: relative; overflow: hidden; border: 1px solid var(--glass-border); }
+        .mix-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.3s; }
+        .mix-content { position: absolute; bottom: 0; left: 0; padding: 15px; width: 100%; background: linear-gradient(to top, black, transparent); }
+
+        /* BOTTOM NAV */
+        .nav-bar {
+            position: absolute; bottom: 0; width: 100%; height: 85px;
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; padding-top: 15px; z-index: 1000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #666; font-size: 10px; font-weight: 500; transition: 0.3s; }
+        .nav-item.active { color: white; }
+        .nav-item svg { fill: currentColor; width: 24px; height: 24px; }
+        .fab { width: 56px; height: 56px; background: var(--accent); border-radius: 50%; transform: translateY(-25px); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(255, 77, 0, 0.4); border: 4px solid #000; }
+        .fab svg { fill: white; width: 28px; height: 28px; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+    <header class="header">
+        <div class="brand">
+            <div class="brand-logo">P</div>
+            PLAYY.
+        </div>
+        <div class="header-actions">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <div style="position:relative;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+                <div style="position:absolute; top:-2px; right:0; width:8px; height:8px; background:var(--accent); border-radius:50%;"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="feed">
+        
+        <div class="filters-rail">
+            <div class="pill active">For You</div>
+            <div class="pill">Following</div>
+            <div class="pill">Events</div>
+            <div class="pill">Music</div>
+            <div class="pill">Live</div>
+            <div class="pill">News</div>
+        </div>
+
+        <div class="stories-rail">
+            <div class="story-item">
+                <div class="story-ring live"><img class="story-img" src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">Live</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">Peggy G.</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">Skrillex</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring live"><img class="story-img" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">BoilerRoom</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">Bella</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring"><img class="story-img" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">FourTet</span>
+            </div>
+             <div class="story-item">
+                <div class="story-ring seen"><img class="story-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">Fred</span>
+            </div>
+             <div class="story-item">
+                <div class="story-ring seen"><img class="story-img" src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=100&q=80"></div>
+                <span class="story-name">Eliza</span>
+            </div>
+        </div>
+
+        <div class="hero-section">
+            <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1514525253440-b39345208668?ixlib=rb-4.0.3">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-concert-crowd-raising-their-hands-42721-large.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay">
+                <div class="hero-badge">Trending Now</div>
+                <h2 class="hero-title">Electric Dreams: The 2025 World Tour Kickoff</h2>
+                <div class="hero-actions">
+                    <div class="glass-btn">♡ 52K</div>
+                    <div class="glass-btn">Save</div>
+                    <div class="glass-btn">Share</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec-head">
+            <div class="sec-title">Read: PLAYY.Blog</div>
+        </div>
+        
+        <div class="article-card">
+            <img class="article-img" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=300&q=80">
+            <div class="article-content">
+                <div class="article-tag">
+                    <span>MUSIC TECH</span>
+                    <span>2m read</span>
+                </div>
+                <div class="article-title">How AI is changing the landscape of underground techno production.</div>
+                <div class="article-meta">By Alex Doe • 2h ago</div>
+            </div>
+        </div>
+        
+        <div class="article-card">
+            <img class="article-img" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&q=80">
+            <div class="article-content">
+                <div class="article-tag">
+                    <span>INTERVIEW</span>
+                    <span>5m read</span>
+                </div>
+                <div class="article-title">Exclusive: Behind the scenes with Peggy Gou in Seoul.</div>
+                <div class="article-meta">By PLAYY.Ed • 4h ago</div>
+            </div>
+        </div>
+
+        <div class="sec-head">
+            <div class="sec-title">Upcoming NFT Tickets</div>
+             <div class="sec-more">View Calendar</div>
+        </div>
+        <div class="nft-carousel-wrapper">
+            <div class="h-scroll nft-carousel">
+                <div class="nft-ticket">
+                    <div class="nft-3d-obj" style="filter: hue-rotate(0deg);"></div>
+                    <div class="nft-details">
+                        <span class="nft-tag">LIMITED</span>
+                        <h3 style="font-size:15px; margin-bottom:4px; font-weight:700;">Golden Circle Access</h3>
+                        <p style="font-size:11px; color:#888;">London • Oct 12</p>
+                    </div>
+                    <button class="nft-buy-btn">0.5 ETH</button>
+                </div>
+                <div class="nft-ticket">
+                    <div class="nft-3d-obj" style="filter: hue-rotate(90deg);"></div>
+                    <div class="nft-details">
+                        <span class="nft-tag" style="color:#00f0ff; border-color:#00f0ff;">VIP</span>
+                        <h3 style="font-size:15px; margin-bottom:4px; font-weight:700;">Cyberpunk Rave</h3>
+                        <p style="font-size:11px; color:#888;">Tokyo • Oct 31</p>
+                    </div>
+                    <button class="nft-buy-btn">Sold Out</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec-head">
+            <div class="sec-title"><span style="color:var(--accent)">⚡</span> PLAAY.Clips</div>
+        </div>
+        <div class="h-scroll">
+            <div class="short-card">
+                <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&w=300&q=80">
+                <div class="short-meta"><span class="short-txt">The Drop 🤯</span></div>
+            </div>
+            <div class="short-card">
+                <img src="https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&w=300&q=80">
+                <div class="short-meta"><span class="short-txt">Backstage</span></div>
+            </div>
+            <div class="short-card">
+                <img src="https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&w=300&q=80">
+                <div class="short-meta"><span class="short-txt">Lights</span></div>
+            </div>
+             <div class="short-card">
+                <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=300&q=80">
+                <div class="short-meta"><span class="short-txt">Crowd</span></div>
+            </div>
+        </div>
+        
+        <div style="text-align:center; padding: 20px; opacity:0.5; font-size:10px; letter-spacing:1px;">YOU ARE UP TO DATE</div>
+
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Home
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            Discover
+        </div>
+        <div class="fab">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+            Inbox
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Profile
+        </div>
+    </nav>
+</div>
+
+<script>
+    // Advanced 3D Tilt Logic
+    const tickets = document.querySelectorAll('.nft-ticket');
+    tickets.forEach(ticket => {
+        ticket.addEventListener('mousemove', (e) => {
+            const rect = ticket.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -15;
+            const rotateY = ((x - centerX) / centerX) * 15;
+            ticket.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        ticket.addEventListener('mouseleave', () => {
+            ticket.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+    });
+</script>
+
+</body>
+</html>
